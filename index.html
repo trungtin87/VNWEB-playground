@@ -1,24 +1,538 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>VNSTYLE Verification</title>
-    <link rel="stylesheet" href="vnstyle.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VNWEB Playground — Học HTML, CSS, JS trực tuyến</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css">
+<style>
+  :root{
+    --nen-den: #1A1714;
+    --nen-panel: #221E19;
+    --nen-panel-2: #2A251F;
+    --chu-nga: #EDE6D6;
+    --chu-mo: #A79E8E;
+    --do-son: #C1440E;
+    --vang-dong: #C9A227;
+    --xanh-ngoc: #3C9C8F;
+    --vien: rgba(237,230,214,0.10);
+    --vien-sang: rgba(237,230,214,0.22);
+    --bo-tron: 10px;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--nen-den);
+    color:var(--chu-nga);
+    font-family:'Be Vietnam Pro', sans-serif;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+
+  /* ===== Thanh tiêu đề ===== */
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px 20px;
+    background:linear-gradient(180deg, var(--nen-panel-2), var(--nen-panel));
+    border-bottom:1px solid var(--vien);
+    flex-shrink:0;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .logo .dau-son{
+    width:14px;height:14px;border-radius:50%;
+    background:conic-gradient(from 210deg, var(--do-son), var(--vang-dong), var(--xanh-ngoc), var(--do-son));
+    box-shadow:0 0 10px rgba(193,68,14,0.5);
+    flex-shrink:0;
+  }
+  .logo h1{
+    font-size:17px;
+    font-weight:800;
+    margin:0;
+    letter-spacing:0.5px;
+  }
+  .logo span{
+    font-size:11px;
+    color:var(--chu-mo);
+    font-weight:500;
+    display:block;
+    margin-top:1px;
+  }
+  .thanh-cong-cu{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  button.nut{
+    font-family:'Be Vietnam Pro', sans-serif;
+    font-size:13px;
+    font-weight:600;
+    color:var(--chu-nga);
+    background:var(--nen-panel-2);
+    border:1px solid var(--vien-sang);
+    border-radius:7px;
+    padding:8px 14px;
+    cursor:pointer;
+    transition:background 0.15s, transform 0.1s, border-color 0.15s;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    white-space:nowrap;
+  }
+  button.nut:hover{ background:#332C24; border-color:var(--vang-dong); }
+  button.nut:active{ transform:scale(0.96); }
+  button.nut.chinh{
+    background:var(--do-son);
+    border-color:var(--do-son);
+    color:#FFF6EE;
+  }
+  button.nut.chinh:hover{ background:#D6551E; }
+  .cong-tac{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    font-size:12.5px;
+    color:var(--chu-mo);
+    font-weight:500;
+    user-select:none;
+    cursor:pointer;
+  }
+  .cong-tac input{ accent-color:var(--vang-dong); width:15px; height:15px; cursor:pointer; }
+
+  /* ===== Khung chính ===== */
+  main{
+    flex:1;
+    display:flex;
+    min-height:0;
+  }
+  .khung-trai{
+    display:flex;
+    flex-direction:column;
+    width:46%;
+    min-width:220px;
+    border-right:1px solid var(--vien);
+    background:var(--nen-panel);
+  }
+  .tay-keo{
+    width:6px;
+    cursor:col-resize;
+    background:var(--nen-den);
+    position:relative;
+    flex-shrink:0;
+  }
+  .tay-keo:hover, .tay-keo.dang-keo{ background:var(--vang-dong); }
+  .khung-phai{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+  }
+
+  /* ===== Thẻ tab kiểu sơn mài ===== */
+  .day-tab{
+    display:flex;
+    background:var(--nen-den);
+    padding:8px 8px 0 8px;
+    gap:4px;
+    flex-shrink:0;
+  }
+  .the-tab{
+    padding:9px 18px;
+    font-size:13px;
+    font-weight:700;
+    font-family:'JetBrains Mono', monospace;
+    color:var(--chu-mo);
+    background:var(--nen-panel-2);
+    border:1px solid var(--vien);
+    border-bottom:none;
+    border-radius:8px 8px 0 0;
+    cursor:pointer;
+    position:relative;
+    top:1px;
+    transition:color 0.15s, background 0.15s;
+  }
+  .the-tab .cham{
+    display:inline-block;
+    width:7px;height:7px;
+    border-radius:50%;
+    margin-right:7px;
+  }
+  .the-tab[data-tab="html"] .cham{ background:var(--do-son); }
+  .the-tab[data-tab="css"] .cham{ background:var(--vang-dong); }
+  .the-tab[data-tab="js"] .cham{ background:var(--xanh-ngoc); }
+  .the-tab.dang-chon{
+    color:var(--chu-nga);
+    background:var(--nen-panel);
+    border-color:var(--vien-sang);
+  }
+  .the-tab[data-tab="html"].dang-chon{ box-shadow: inset 0 2px 0 var(--do-son); }
+  .the-tab[data-tab="css"].dang-chon{ box-shadow: inset 0 2px 0 var(--vang-dong); }
+  .the-tab[data-tab="js"].dang-chon{ box-shadow: inset 0 2px 0 var(--xanh-ngoc); }
+
+  .vung-soan-thao{ flex:1; min-height:0; position:relative; background:var(--nen-panel); }
+  .vung-soan-thao .CodeMirror{
+    position:absolute; top:0; left:0; right:0; bottom:0;
+    height:100% !important;
+    font-family:'JetBrains Mono', monospace;
+    font-size:13.5px;
+    line-height:1.55;
+  }
+  .khung-mo, .khung-an{ display:none; }
+  .khung-mo{ display:block; height:100%; }
+
+  /* ===== Xem trước ===== */
+  .thanh-xem-truoc{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:8px 14px;
+    background:var(--nen-panel-2);
+    border-bottom:1px solid var(--vien);
+    font-size:12px;
+    color:var(--chu-mo);
+    font-weight:600;
+    flex-shrink:0;
+  }
+  .cham-trinh-duyet{ display:flex; gap:5px; }
+  .cham-trinh-duyet span{ width:9px; height:9px; border-radius:50%; display:inline-block; }
+  .cham-trinh-duyet span:nth-child(1){ background:var(--do-son); }
+  .cham-trinh-duyet span:nth-child(2){ background:var(--vang-dong); }
+  .cham-trinh-duyet span:nth-child(3){ background:var(--xanh-ngoc); }
+
+  #khung-xem-truoc{
+    flex:1;
+    border:none;
+    width:100%;
+    background:#FBF9F4;
+    min-height:0;
+  }
+
+  .bang-console{
+    height:130px;
+    background:#141110;
+    border-top:1px solid var(--vien);
+    display:flex;
+    flex-direction:column;
+    flex-shrink:0;
+    transition:height 0.15s;
+  }
+  .bang-console.thu-gon{ height:32px; }
+  .tieu-de-console{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:6px 14px;
+    font-size:11.5px;
+    font-weight:700;
+    letter-spacing:0.5px;
+    color:var(--chu-mo);
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .tieu-de-console button{
+    background:none; border:none; color:var(--chu-mo);
+    font-size:11px; cursor:pointer; font-family:inherit;
+  }
+  #noi-dung-console{
+    flex:1;
+    overflow-y:auto;
+    padding:0 14px 8px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    line-height:1.6;
+  }
+  .dong-console{ border-top:1px solid var(--vien); padding:4px 0; word-break:break-word; }
+  .dong-console.loi{ color:#FF8A6B; }
+  .dong-console.canh-bao{ color:var(--vang-dong); }
+  .dong-console.thuong{ color:var(--chu-nga); }
+  .dong-console .nhan{ color:var(--chu-mo); margin-right:6px; }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 760px){
+    main{ flex-direction:column; }
+    .khung-trai{ width:100% !important; height:46%; border-right:none; border-bottom:1px solid var(--vien); }
+    .tay-keo{ display:none; }
+    .khung-phai{ height:54%; }
+    header{ padding:10px 14px; }
+    .thanh-cong-cu{ gap:6px; }
+    button.nut span.chu-day-du{ display:none; }
+  }
+</style>
 </head>
-<body hiển-thị="khung-chứa">
-    <header căn-lề="giữa" màu-nền="chính">
-        <h1>VNSTYLE</h1>
-        <p kiểu-chữ="nghiêng">Bản địa hóa hoàn toàn</p>
-    </header>
-    <div hiển-thị="hàng">
-        <article>
-            <h3 màu-chữ="chính">Cột 1</h3>
-            <button màu-nền="thành-công">Xác nhận</button>
-        </article>
-        <article>
-            <h3 màu-chữ="đỏ">Cột 2</h3>
-            <button màu-nền="nguy-hiểm">Hủy bỏ</button>
-        </article>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="dau-son"></div>
+    <div>
+      <h1>VNWEB Playground</h1>
+      <span>Sân chơi học HTML · CSS · JavaScript</span>
     </div>
+  </div>
+  <div class="thanh-cong-cu">
+    <label class="cong-tac">
+      <input type="checkbox" id="cb-tu-dong-chay" checked>
+      Tự động chạy
+    </label>
+    <button class="nut" id="nut-chay-lai" title="Chạy lại đoạn mã">▶ <span class="chu-day-du">Chạy</span></button>
+    <button class="nut" id="nut-dat-lai" title="Đặt lại về mẫu ban đầu">↺ <span class="chu-day-du">Đặt lại</span></button>
+    <button class="nut chinh" id="nut-tai-xuong" title="Tải xuống file HTML hoàn chỉnh">⇩ <span class="chu-day-du">Tải xuống</span></button>
+  </div>
+</header>
+
+<main>
+  <div class="khung-trai" id="khung-trai">
+    <div class="day-tab">
+      <div class="the-tab dang-chon" data-tab="html"><span class="cham"></span>index.html</div>
+      <div class="the-tab" data-tab="css"><span class="cham"></span>style.css</div>
+      <div class="the-tab" data-tab="js"><span class="cham"></span>script.js</div>
+    </div>
+    <div class="vung-soan-thao">
+      <div class="khung-mo" id="khung-html"><textarea id="o-soan-html"></textarea></div>
+      <div class="khung-an" id="khung-css"><textarea id="o-soan-css"></textarea></div>
+      <div class="khung-an" id="khung-js"><textarea id="o-soan-js"></textarea></div>
+    </div>
+  </div>
+
+  <div class="tay-keo" id="tay-keo"></div>
+
+  <div class="khung-phai">
+    <div class="thanh-xem-truoc">
+      <div class="cham-trinh-duyet"><span></span><span></span><span></span></div>
+      <span>Xem trước trực tiếp</span>
+      <span></span>
+    </div>
+    <iframe id="khung-xem-truoc" sandbox="allow-scripts allow-modals"></iframe>
+    <div class="bang-console" id="bang-console">
+      <div class="tieu-de-console" id="tieu-de-console">
+        <span>▾ BẢNG ĐIỀU KHIỂN (console.log)</span>
+        <button id="nut-xoa-console">Xoá</button>
+      </div>
+      <div id="noi-dung-console"></div>
+    </div>
+  </div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+
+<script>
+// ===================== DỮ LIỆU MẪU BAN ĐẦU =====================
+const mau_html = `<h1>Xin chào, VNWEB!</h1>
+<p>Đây là sân chơi để bạn học <strong>HTML</strong>, <strong>CSS</strong> và <strong>JavaScript</strong>.</p>
+<button id="nut-thu">Bấm vào đây</button>
+<p id="ket-qua">Số lần bấm: 0</p>`;
+
+const mau_css = `body {
+  font-family: sans-serif;
+  padding: 24px;
+  color: #2b2b2b;
+}
+
+h1 {
+  color: #c1440e;
+}
+
+#nut-thu {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #3c9c8f;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}`;
+
+const mau_js = `let so_lan_bam = 0;
+const nut_thu = document.getElementById('nut-thu');
+const ket_qua = document.getElementById('ket-qua');
+
+nut_thu.addEventListener('click', function () {
+  so_lan_bam = so_lan_bam + 1;
+  ket_qua.textContent = 'Số lần bấm: ' + so_lan_bam;
+  console.log('Đã bấm nút, tổng số lần:', so_lan_bam);
+});`;
+
+// ===================== KHỞI TẠO SOẠN THẢO =====================
+function tao_soan_thao(id_o_nho, che_do, gia_tri_ban_dau) {
+  return CodeMirror.fromTextArea(document.getElementById(id_o_nho), {
+    mode: che_do,
+    theme: 'material-darker',
+    lineNumbers: true,
+    lineWrapping: true,
+    tabSize: 2,
+    indentUnit: 2,
+    autoCloseBrackets: true,
+    autoCloseTags: true,
+    value: gia_tri_ban_dau
+  });
+}
+
+document.getElementById('o-soan-html').value = mau_html;
+document.getElementById('o-soan-css').value = mau_css;
+document.getElementById('o-soan-js').value = mau_js;
+
+const soan_thao_html = tao_soan_thao('o-soan-html', 'htmlmixed', mau_html);
+const soan_thao_css = tao_soan_thao('o-soan-css', 'css', mau_css);
+const soan_thao_js = tao_soan_thao('o-soan-js', 'javascript', mau_js);
+
+// ===================== CHUYỂN TAB =====================
+const cac_the_tab = document.querySelectorAll('.the-tab');
+const ten_khung = { html: 'khung-html', css: 'khung-css', js: 'khung-js' };
+const cac_soan_thao = { html: soan_thao_html, css: soan_thao_css, js: soan_thao_js };
+
+function chuyen_tab(ten_tab) {
+  cac_the_tab.forEach(the => the.classList.toggle('dang-chon', the.dataset.tab === ten_tab));
+  Object.keys(ten_khung).forEach(ten => {
+    const khung = document.getElementById(ten_khung[ten]);
+    khung.classList.toggle('khung-mo', ten === ten_tab);
+    khung.classList.toggle('khung-an', ten !== ten_tab);
+  });
+  setTimeout(() => cac_soan_thao[ten_tab].refresh(), 0);
+}
+
+cac_the_tab.forEach(the => {
+  the.addEventListener('click', () => chuyen_tab(the.dataset.tab));
+});
+
+// ===================== CHẠY / XEM TRƯỚC =====================
+const khung_xem_truoc = document.getElementById('khung-xem-truoc');
+const o_tu_dong_chay = document.getElementById('cb-tu-dong-chay');
+let bo_dem_debounce = null;
+
+function tao_ma_nguon_day_du() {
+  const script_console_noi_bo = `
+    <script>
+      const goc_log = console.log, goc_error = console.error, goc_warn = console.warn;
+      function gui_ve_cha(loai, cac_doi_so) {
+        try {
+          const noi_dung = Array.from(cac_doi_so).map(muc => {
+            if (typeof muc === 'object') { try { return JSON.stringify(muc); } catch(e) { return String(muc); } }
+            return String(muc);
+          }).join(' ');
+          window.parent.postMessage({ nguon: 'vnweb-console', loai, noi_dung }, '*');
+        } catch (loi) {}
+      }
+      console.log = function(...doi_so) { gui_ve_cha('thuong', doi_so); goc_log.apply(console, doi_so); };
+      console.error = function(...doi_so) { gui_ve_cha('loi', doi_so); goc_error.apply(console, doi_so); };
+      console.warn = function(...doi_so) { gui_ve_cha('canh-bao', doi_so); goc_warn.apply(console, doi_so); };
+      window.onerror = function(thong_diep) { gui_ve_cha('loi', [thong_diep]); };
+    <\/script>
+  `;
+  return `<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+${script_console_noi_bo}
+<style>${soan_thao_css.getValue()}</style>
+</head>
+<body>
+${soan_thao_html.getValue()}
+<script>${soan_thao_js.getValue()}<\/script>
+</body>
+</html>`;
+}
+
+function cap_nhat_xem_truoc() {
+  document.getElementById('noi-dung-console').innerHTML = '';
+  khung_xem_truoc.srcdoc = tao_ma_nguon_day_du();
+}
+
+function len_lich_cap_nhat() {
+  if (!o_tu_dong_chay.checked) return;
+  clearTimeout(bo_dem_debounce);
+  bo_dem_debounce = setTimeout(cap_nhat_xem_truoc, 450);
+}
+
+soan_thao_html.on('change', len_lich_cap_nhat);
+soan_thao_css.on('change', len_lich_cap_nhat);
+soan_thao_js.on('change', len_lich_cap_nhat);
+
+document.getElementById('nut-chay-lai').addEventListener('click', cap_nhat_xem_truoc);
+
+// ===================== ĐẶT LẠI =====================
+document.getElementById('nut-dat-lai').addEventListener('click', () => {
+  if (!confirm('Đặt lại về mã mẫu ban đầu? Mọi thay đổi hiện tại sẽ mất.')) return;
+  soan_thao_html.setValue(mau_html);
+  soan_thao_css.setValue(mau_css);
+  soan_thao_js.setValue(mau_js);
+  cap_nhat_xem_truoc();
+});
+
+// ===================== TẢI XUỐNG =====================
+document.getElementById('nut-tai-xuong').addEventListener('click', () => {
+  const noi_dung_file = tao_ma_nguon_day_du().replace(/<style>[\s\S]*?window\.onerror[\s\S]*?<\/script>\s*/, '');
+  const tep_blob = new Blob([noi_dung_file], { type: 'text/html' });
+  const the_a = document.createElement('a');
+  the_a.href = URL.createObjectURL(tep_blob);
+  the_a.download = 'vnweb-playground.html';
+  the_a.click();
+});
+
+// ===================== BẢNG CONSOLE =====================
+const bang_console = document.getElementById('bang-console');
+const noi_dung_console = document.getElementById('noi-dung-console');
+
+document.getElementById('tieu-de-console').addEventListener('click', (su_kien) => {
+  if (su_kien.target.id === 'nut-xoa-console') return;
+  bang_console.classList.toggle('thu-gon');
+});
+
+document.getElementById('nut-xoa-console').addEventListener('click', (su_kien) => {
+  su_kien.stopPropagation();
+  noi_dung_console.innerHTML = '';
+});
+
+window.addEventListener('message', (su_kien) => {
+  const du_lieu = su_kien.data;
+  if (!du_lieu || du_lieu.nguon !== 'vnweb-console') return;
+  const dong = document.createElement('div');
+  dong.className = 'dong-console ' + (du_lieu.loai === 'loi' ? 'loi' : du_lieu.loai === 'canh-bao' ? 'canh-bao' : 'thuong');
+  dong.innerHTML = '<span class="nhan">›</span>' + du_lieu.noi_dung.replace(/</g, '&lt;');
+  noi_dung_console.appendChild(dong);
+  noi_dung_console.scrollTop = noi_dung_console.scrollHeight;
+});
+
+// ===================== KÉO GIÃN KHUNG TRÁI/PHẢI =====================
+const tay_keo = document.getElementById('tay-keo');
+const khung_trai = document.getElementById('khung-trai');
+let dang_keo = false;
+
+tay_keo.addEventListener('mousedown', () => {
+  dang_keo = true;
+  tay_keo.classList.add('dang-keo');
+});
+window.addEventListener('mouseup', () => {
+  dang_keo = false;
+  tay_keo.classList.remove('dang-keo');
+});
+window.addEventListener('mousemove', (su_kien) => {
+  if (!dang_keo) return;
+  const phan_tram = (su_kien.clientX / window.innerWidth) * 100;
+  if (phan_tram > 20 && phan_tram < 80) {
+    khung_trai.style.width = phan_tram + '%';
+    [soan_thao_html, soan_thao_css, soan_thao_js].forEach(st => st.refresh());
+  }
+});
+
+// ===================== CHẠY LẦN ĐẦU =====================
+cap_nhat_xem_truoc();
+</script>
 </body>
 </html>

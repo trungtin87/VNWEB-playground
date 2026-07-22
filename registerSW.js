@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/VNWEB-playground/sw.js', { scope: '/VNWEB-playground/' })})}

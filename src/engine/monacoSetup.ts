@@ -21,6 +21,8 @@ import 'monaco-editor/esm/vs/language/typescript/monaco.contribution';
 
 import { loader } from '@monaco-editor/react';
 import { dangKyGoiYTiengViet } from './autocomplete';
+import { cssDefaults } from 'monaco-editor/esm/vs/language/css/monaco.contribution';
+import { javascriptDefaults } from 'monaco-editor/esm/vs/language/typescript/monaco.contribution';
 
 import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
 import JsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
@@ -42,5 +44,19 @@ self.MonacoEnvironment = {
 loader.config({ monaco });
 
 dangKyGoiYTiengViet(monaco);
+
+// Tắt kiểm tra lỗi CSS: mã hiển thị là tên thuộc tính/giá trị tiếng Việt, không phải
+// mã CSS chuẩn nên trình kiểm tra thật sẽ luôn coi là "thuộc tính không tồn tại".
+cssDefaults.setOptions({ validate: false });
+
+// Tắt kiểm tra lỗi cú pháp + ngữ nghĩa của JS: mã đang hiển thị là các từ tiếng Việt
+// thay thế (bien, hang_so, ham...) chứ KHÔNG PHẢI cú pháp JavaScript thật (việc dịch
+// sang mã chuẩn diễn ra riêng ở tầng tree-sitter khi bấm Chạy). Vì vậy trình phân tích
+// cú pháp thật của Monaco/TypeScript sẽ luôn coi cả dòng là "sai cú pháp" nếu không tắt.
+javascriptDefaults.setDiagnosticsOptions({
+  noSemanticValidation: true,
+  noSyntaxValidation: true,
+  noSuggestionDiagnostics: true,
+});
 
 export { monaco };

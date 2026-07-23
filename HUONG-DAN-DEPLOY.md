@@ -11,7 +11,6 @@ npm install
 ```bash
 npm run dev
 ```
-
 Mở trình duyệt theo địa chỉ hiện ra (thường là http://localhost:5173/VNWEB-playground/).
 
 ## 3. Build bản production
@@ -24,7 +23,6 @@ Kết quả nằm trong thư mục `dist/`. Đây là toàn bộ nội dung cầ
 không cần `node_modules`, không cần mã nguồn `.ts/.tsx`.
 
 Có thể kiểm tra lại bản build bằng:
-
 ```bash
 npm run preview
 ```
@@ -40,18 +38,15 @@ repo — **nếu sau này đổi tên repo, phải sửa lại giá trị này r
 Cách deploy (chọn 1 trong 2 tuỳ bạn đang cấu hình GitHub Pages theo kiểu nào):
 
 **Cách A — dùng nhánh `gh-pages` riêng (khuyên dùng, tách biệt code và bản build):**
-
 ```bash
 npm run deploy
 ```
-
 (Script này đã có sẵn trong `package.json`: tự build rồi đẩy nội dung `dist/` lên nhánh
 `gh-pages`. Gói `gh-pages` đã được thêm sẵn vào `devDependencies`, không cần cài thêm gì.)
 
 Sau đó vào Settings → Pages → Source: chọn nhánh `gh-pages`, thư mục `/ (root)`.
 
 **Cách B — copy thủ công vào nhánh đang deploy:**
-
 ```bash
 npm run build
 # copy toàn bộ nội dung trong dist/ vào đúng nhánh/thư mục mà GitHub Pages
